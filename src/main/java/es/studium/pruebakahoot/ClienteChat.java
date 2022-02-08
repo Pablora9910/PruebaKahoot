@@ -105,7 +105,7 @@ public class ClienteChat extends JFrame implements ActionListener {
 		String nombre = JOptionPane.showInputDialog("Introduce tu nombre o nick:");
 		Socket socket = null;
 		try {
-			socket = new Socket("127.0.0.1", puerto);
+			socket = new Socket("192.168.0.19", puerto);
 		} catch (IOException ex) {
 			ex.printStackTrace();
 			JOptionPane.showMessageDialog(null, "Imposible conectar con el servidor \n" + ex.getMessage(),
@@ -127,11 +127,25 @@ public class ClienteChat extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == btn_enviar) {
 			String texto=area.getText();
-			try {
-				rellenar();
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+			if(respuesta1.isSelected())
+			{
+				texto=respuesta1.getText();
+				respuesta1.setSelected(false);
+			}
+			if(respuesta2.isSelected())
+			{
+				texto=respuesta2.getText();
+				respuesta2.setSelected(false);
+			}
+			if(respuesta3.isSelected())
+			{
+				texto=respuesta3.getText();
+				respuesta3.setSelected(false);
+			}
+			if(respuesta4.isSelected())
+			{
+				texto=respuesta4.getText();
+				respuesta4.setSelected(false);
 			}
 			try {
 				area.setText("");
