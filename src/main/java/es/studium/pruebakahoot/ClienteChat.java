@@ -14,9 +14,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 
 public class ClienteChat extends JFrame implements ActionListener {
 	private static final long serialVersionUID = 1L;
@@ -37,10 +35,12 @@ public class ClienteChat extends JFrame implements ActionListener {
 	JTextArea area=new JTextArea();
 
 	JButton btn_enviar= new JButton("Enviar");
+	
+	static Preguntas preguntas;
 
 	public ClienteChat(Socket socket, String nombre) {
 // Prepara la pantalla. Se recibe el socket creado y el nombre del cliente
-		super(" Conexión del cliente chat: " + nombre);
+		super(" Conexiï¿½n del cliente chat: " + nombre);
 			setTitle("Cliente 1");
 			setBounds(100, 100, 500, 600);
 			//JPanel
@@ -82,7 +82,7 @@ public class ClienteChat extends JFrame implements ActionListener {
 //En el flujo de salida se escribe un mensaje
 //indicando que el cliente se ha unido al Chat.
 //El HiloServidor recibe este mensaje y
-//lo reenvía a todos los clientes conectados
+//lo reenvï¿½a a todos los clientes conectados
 		try {
 			fentrada = new DataInputStream(socket.getInputStream());
 			fsalida = new DataOutputStream(socket.getOutputStream());
@@ -95,17 +95,17 @@ public class ClienteChat extends JFrame implements ActionListener {
 		}
 	}
 
-//El método main es el que lanza el cliente,
+//El mï¿½todo main es el que lanza el cliente,
 //para ello en primer lugar se solicita el nombre o nick del
 //cliente, una vez especificado el nombre
-//se crea la conexión al servidor y se crear la pantalla del Chat(ClientChat)
-//lanzando su ejecución (ejecutar()).
+//se crea la conexiï¿½n al servidor y se crear la pantalla del Chat(ClientChat)
+//lanzando su ejecuciï¿½n (ejecutar()).
 	public static void main(String[] args) throws Exception {
 		int puerto = 44444;
 		String nombre = JOptionPane.showInputDialog("Introduce tu nombre o nick:");
 		Socket socket = null;
 		try {
-			socket = new Socket("192.168.0.19", puerto);
+			socket = new Socket("192.168.0.56", puerto);
 		} catch (IOException ex) {
 			ex.printStackTrace();
 			JOptionPane.showMessageDialog(null, "Imposible conectar con el servidor \n" + ex.getMessage(),
@@ -118,12 +118,12 @@ public class ClienteChat extends JFrame implements ActionListener {
 			cliente.setVisible(true);
 			cliente.ejecutar();
 		} else {
-			System.out.println("El nombre está vacío...");
+			System.out.println("El nombre estï¿½ vacï¿½o...");
 		}
 	}
 
-// Cuando se pulsa el botón Enviar,
-// el mensaje introducido se envía al servidor por el flujo de salida
+// Cuando se pulsa el botï¿½n Enviar,
+// el mensaje introducido se envï¿½a al servidor por el flujo de salida
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == btn_enviar) {
 			String texto=area.getText();
@@ -147,16 +147,18 @@ public class ClienteChat extends JFrame implements ActionListener {
 				texto=respuesta4.getText();
 				respuesta4.setSelected(false);
 			}
+			
 			try {
 				area.setText("");
 				fsalida.writeUTF(texto);
 			} catch (IOException ex) {
 				ex.printStackTrace();
 			}
+			
 		}
-// Si se pulsa el botón Salir,
-// se envía un mensaje indicando que el cliente abandona el chat
-// y también se envía un * para indicar
+// Si se pulsa el botï¿½n Salir,
+// se envï¿½a un mensaje indicando que el cliente abandona el chat
+// y tambiï¿½n se envï¿½a un * para indicar
 // al servidor que el cliente se ha cerrado
 	/*	else if (e.getSource() == btn_enviar) {
 			String texto = "SERVIDOR> Abandona el chat... " + nombre;
@@ -170,10 +172,10 @@ public class ClienteChat extends JFrame implements ActionListener {
 		}*/
 	}
 
-// Dentro del método ejecutar(), el cliente lee lo que el
+// Dentro del mï¿½todo ejecutar(), el cliente lee lo que el
 // hilo le manda (mensajes del Chat) y lo muestra en el textarea.
 // Esto se ejecuta en un bucle del que solo se sale
-// en el momento que el cliente pulse el botón Salir
+// en el momento que el cliente pulse el botï¿½n Salir
 // y se modifique la variable repetir
 	public void ejecutar() {
 		String texto = "";
@@ -196,10 +198,11 @@ public class ClienteChat extends JFrame implements ActionListener {
 
 private void rellenar() throws IOException {
 	String texto;
-	texto = fentrada.readUTF();
-	respuesta1.setText(texto);
+	
 	texto = fentrada.readUTF();
 	lbl_pregunta.setText(texto);
+	texto = fentrada.readUTF();
+	respuesta1.setText(texto);
 	texto = fentrada.readUTF();
 	respuesta2.setText(texto);
 	texto = fentrada.readUTF();

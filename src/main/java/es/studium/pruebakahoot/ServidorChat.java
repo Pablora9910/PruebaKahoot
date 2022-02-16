@@ -29,7 +29,7 @@ public class ServidorChat extends JFrame implements ActionListener {
 	static Socket[] tabla = new Socket[MAXIMO];
 
 	public ServidorChat() {
-// Construimos el entorno gráfico
+// Construimos el entorno grï¿½fico
 		super(" VENTANA DEL SERVIDOR DE CHAT ");
 		setLayout(null);
 		mensaje.setBounds(10, 10, 400, 30);
@@ -45,10 +45,10 @@ public class ServidorChat extends JFrame implements ActionListener {
 		salir.setBounds(420, 10, 100, 30);
 		add(salir);
 		textarea.setEditable(false);
-// Se ha anulado el cierre de la ventana para que la finalización
-// del servidor se haga desde el botón Salir.
-// Cuando se pulsa el botón se cierra el ServerSocket y
-// finaliza la ejecución
+// Se ha anulado el cierre de la ventana para que la finalizaciï¿½n
+// del servidor se haga desde el botï¿½n Salir.
+// Cuando se pulsa el botï¿½n se cierra el ServerSocket y
+// finaliza la ejecuciï¿½n
 		salir.addActionListener(this);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
@@ -61,20 +61,20 @@ public class ServidorChat extends JFrame implements ActionListener {
 		ServidorChat pantalla = new ServidorChat();
 		pantalla.setBounds(0, 0, 540, 450);
 		pantalla.setVisible(true);
-		mensaje.setText("Número de conexiones actuales: " + 0);
-// Se usa un bucle para controlar el número de conexiones.
-// Dentro del bucle el servidor espera la conexión
+		mensaje.setText("Nï¿½mero de conexiones actuales: " + 0);
+// Se usa un bucle para controlar el nï¿½mero de conexiones.
+// Dentro del bucle el servidor espera la conexiï¿½n
 // del cliente y cuando se conecta se crea un socket
 		while (CONEXIONES < MAXIMO) {
 			Socket socket;
 			try {
 				socket = servidor.accept();
 			} catch (SocketException sex) {
-// Sale por aquí si pulsamos el botón salir
+// Sale por aquï¿½ si pulsamos el botï¿½n salir
 				break;
 			}
-// El socket creado se añade a la tabla,
-// se incrementa el número de conexiones
+// El socket creado se aï¿½ade a la tabla,
+// se incrementa el nï¿½mero de conexiones
 // y se lanza el hilo para gestionar los mensajes
 // del cliente que se acaba de conectar
 			tabla[CONEXIONES] = socket;
@@ -83,16 +83,16 @@ public class ServidorChat extends JFrame implements ActionListener {
 			HiloServidor hilo = new HiloServidor(socket);
 			hilo.start();
 		}
-// Si se alcanzan 15 conexiones o se pulsa el botón Salir,
+// Si se alcanzan 15 conexiones o se pulsa el botï¿½n Salir,
 // el programa se sale del bucle.
 // Al pulsar Salir se cierra el ServerSocket
-// lo que provoca una excepción (SocketException)
-// en la sentencia accept(), la excepción se captura
+// lo que provoca una excepciï¿½n (SocketException)
+// en la sentencia accept(), la excepciï¿½n se captura
 // y se ejecuta un break para salir del bucle
 		if (!servidor.isClosed()) {
 			try {
 				mensaje2.setForeground(Color.red);
-				mensaje2.setText("Máximo Nº de conexiones establecidas: " + CONEXIONES);
+				mensaje2.setText("MÃ¡ximo NÂº de conexiones establecidas: " + CONEXIONES);
 				servidor.close();
 			} catch (IOException ex) {
 				ex.printStackTrace();
