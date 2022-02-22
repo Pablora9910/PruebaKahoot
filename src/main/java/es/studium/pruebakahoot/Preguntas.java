@@ -1,7 +1,13 @@
 package es.studium.pruebakahoot;
 
-public class Preguntas 
+import java.io.Serializable;
+
+public class Preguntas implements Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	public int id;
 	public String enunciado, correcta, incorrecta1, incorrecta2, incorrecta3;
 	

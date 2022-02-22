@@ -5,6 +5,8 @@ import java.awt.event.ActionListener;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 import javax.swing.ButtonGroup;
@@ -19,6 +21,7 @@ import javax.swing.JTextArea;
 public class ClienteChat extends JFrame implements ActionListener {
 	private static final long serialVersionUID = 1L;
 	Socket socket;
+	ObjectInputStream fentradaPregunta;
 	DataInputStream fentrada;
 	DataOutputStream fsalida;
 	String nombre;
@@ -35,59 +38,59 @@ public class ClienteChat extends JFrame implements ActionListener {
 	JTextArea area=new JTextArea();
 
 	JButton btn_enviar= new JButton("Enviar");
-	
-	static Preguntas preguntas;
+
+	Preguntas  pregunta;
 
 	public ClienteChat(Socket socket, String nombre) {
-// Prepara la pantalla. Se recibe el socket creado y el nombre del cliente
+		// Prepara la pantalla. Se recibe el socket creado y el nombre del cliente
 		super(" Conexi�n del cliente chat: " + nombre);
-			setTitle("Cliente 1");
-			setBounds(100, 100, 500, 600);
-			//JPanel
-			JPanel panel= new JPanel();		
-			panel.setLayout(null);	
+		setTitle("Cliente 1");
+		setBounds(100, 100, 500, 600);
+		//JPanel
+		JPanel panel= new JPanel();		
+		panel.setLayout(null);	
 
-			lbl_pregunta.setBounds(10, 1, 300, 100);
-			panel.add(lbl_pregunta);
+		lbl_pregunta.setBounds(20, 1, 300, 100);
+		panel.add(lbl_pregunta);
 
-			respuesta1.setBounds(50, 100, 200, 50);
-			grupo.add(respuesta1);
-			respuesta2.setBounds(50, 150, 200, 50);
-			grupo.add(respuesta2);
-			respuesta3.setBounds(50, 200, 200, 50);
-			grupo.add(respuesta3);
-			respuesta4.setBounds(50, 250, 200, 50);
-			grupo.add(respuesta4);
+		respuesta1.setBounds(50, 100, 200, 50);
+		grupo.add(respuesta1);
+		respuesta2.setBounds(50, 150, 200, 50);
+		grupo.add(respuesta2);
+		respuesta3.setBounds(50, 200, 200, 50);
+		grupo.add(respuesta3);
+		respuesta4.setBounds(50, 250, 200, 50);
+		grupo.add(respuesta4);
 
-			panel.add(respuesta1);
-			panel.add(respuesta2);
-			panel.add(respuesta3);
-			panel.add(respuesta4);
+		panel.add(respuesta1);
+		panel.add(respuesta2);
+		panel.add(respuesta3);
+		panel.add(respuesta4);
 
-			area.setBounds(20, 350, 300, 200);
-			panel.add(area);
+		area.setBounds(20, 350, 300, 200);
+		panel.add(area);
 
-			btn_enviar.setBounds(350, 380, 100, 150);
-			panel.add(btn_enviar);
+		btn_enviar.setBounds(350, 380, 100, 150);
+		panel.add(btn_enviar);
 
-			add(panel);
-			
-			//Fin JPanel
-			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-			setVisible(true);
-			btn_enviar.addActionListener(this);
+		add(panel);
+
+		//Fin JPanel
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setVisible(true);
+		btn_enviar.addActionListener(this);
 		this.socket = socket;
 		this.nombre = nombre;
-//Se crean los flujos de entrada y salida.
-//En el flujo de salida se escribe un mensaje
-//indicando que el cliente se ha unido al Chat.
-//El HiloServidor recibe este mensaje y
-//lo reenv�a a todos los clientes conectados
+		//Se crean los flujos de entrada y salida.
+		//En el flujo de salida se escribe un mensaje
+		//indicando que el cliente se ha unido al Chat.
+		//El HiloServidor recibe este mensaje y
+		//lo reenv�a a todos los clientes conectados
 		try {
 			fentrada = new DataInputStream(socket.getInputStream());
 			fsalida = new DataOutputStream(socket.getOutputStream());
-			String texto = "SERVIDOR> Entra en el chat... " + nombre;
-			fsalida.writeUTF(texto);
+			//String texto = nombre;
+			fsalida.writeUTF(nombre);
 		} catch (IOException ex) {
 			System.out.println("Error de E/S");
 			ex.printStackTrace();
@@ -95,17 +98,17 @@ public class ClienteChat extends JFrame implements ActionListener {
 		}
 	}
 
-//El m�todo main es el que lanza el cliente,
-//para ello en primer lugar se solicita el nombre o nick del
-//cliente, una vez especificado el nombre
-//se crea la conexi�n al servidor y se crear la pantalla del Chat(ClientChat)
-//lanzando su ejecuci�n (ejecutar()).
+	//El m�todo main es el que lanza el cliente,
+	//para ello en primer lugar se solicita el nombre o nick del
+	//cliente, una vez especificado el nombre
+	//se crea la conexi�n al servidor y se crear la pantalla del Chat(ClientChat)
+	//lanzando su ejecuci�n (ejecutar()).
 	public static void main(String[] args) throws Exception {
 		int puerto = 44444;
 		String nombre = JOptionPane.showInputDialog("Introduce tu nombre o nick:");
 		Socket socket = null;
 		try {
-			socket = new Socket("192.168.0.56", puerto);
+			socket = new Socket("192.168.0.31", puerto);
 		} catch (IOException ex) {
 			ex.printStackTrace();
 			JOptionPane.showMessageDialog(null, "Imposible conectar con el servidor \n" + ex.getMessage(),
@@ -122,45 +125,54 @@ public class ClienteChat extends JFrame implements ActionListener {
 		}
 	}
 
-// Cuando se pulsa el bot�n Enviar,
-// el mensaje introducido se env�a al servidor por el flujo de salida
+	// Cuando se pulsa el bot�n Enviar,
+	// el mensaje introducido se env�a al servidor por el flujo de salida
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == btn_enviar) {
 			String texto=area.getText();
 			if(respuesta1.isSelected())
 			{
-				texto=respuesta1.getText();
 				respuesta1.setSelected(false);
+				int correcta = comprobarPregunta(respuesta1.getText(), pregunta.getCorrecta());
+				System.out.println(correcta + "Cliente Seleccionada");
+				EnviarResultado(correcta);
 			}
 			if(respuesta2.isSelected())
 			{
-				texto=respuesta2.getText();
+			
 				respuesta2.setSelected(false);
+				int correcta = comprobarPregunta(respuesta2.getText(), pregunta.getCorrecta());
+				System.out.println(correcta+ "Cliente Seleccionada");
+				EnviarResultado(correcta);
 			}
 			if(respuesta3.isSelected())
 			{
-				texto=respuesta3.getText();
 				respuesta3.setSelected(false);
+				int correcta = comprobarPregunta(respuesta3.getText(), pregunta.getCorrecta());
+				System.out.println(correcta+ "Cliente Seleccionada");
+				EnviarResultado(correcta);
 			}
 			if(respuesta4.isSelected())
 			{
-				texto=respuesta4.getText();
 				respuesta4.setSelected(false);
+				int correcta = comprobarPregunta(respuesta4.getText(), pregunta.getCorrecta());
+				System.out.println(correcta+ "Cliente Seleccionada");
+				EnviarResultado(correcta);
 			}
-			
+
 			try {
 				area.setText("");
 				fsalida.writeUTF(texto);
 			} catch (IOException ex) {
 				ex.printStackTrace();
 			}
-			
+
 		}
-// Si se pulsa el bot�n Salir,
-// se env�a un mensaje indicando que el cliente abandona el chat
-// y tambi�n se env�a un * para indicar
-// al servidor que el cliente se ha cerrado
-	/*	else if (e.getSource() == btn_enviar) {
+		// Si se pulsa el bot�n Salir,
+		// se env�a un mensaje indicando que el cliente abandona el chat
+		// y tambi�n se env�a un * para indicar
+		// al servidor que el cliente se ha cerrado
+		/*	else if (e.getSource() == btn_enviar) {
 			String texto = "SERVIDOR> Abandona el chat... " + nombre;
 			try {
 				fsalida.writeUTF(texto);
@@ -172,13 +184,12 @@ public class ClienteChat extends JFrame implements ActionListener {
 		}*/
 	}
 
-// Dentro del m�todo ejecutar(), el cliente lee lo que el
-// hilo le manda (mensajes del Chat) y lo muestra en el textarea.
-// Esto se ejecuta en un bucle del que solo se sale
-// en el momento que el cliente pulse el bot�n Salir
-// y se modifique la variable repetir
+	// Dentro del m�todo ejecutar(), el cliente lee lo que el
+	// hilo le manda (mensajes del Chat) y lo muestra en el textarea.
+	// Esto se ejecuta en un bucle del que solo se sale
+	// en el momento que el cliente pulse el bot�n Salir
+	// y se modifique la variable repetir
 	public void ejecutar() {
-		String texto = "";
 		while (repetir) {
 			try {
 				rellenar();
@@ -196,18 +207,80 @@ public class ClienteChat extends JFrame implements ActionListener {
 		}
 	}
 
-private void rellenar() throws IOException {
-	String texto;
-	
-	texto = fentrada.readUTF();
-	lbl_pregunta.setText(texto);
-	texto = fentrada.readUTF();
-	respuesta1.setText(texto);
-	texto = fentrada.readUTF();
-	respuesta2.setText(texto);
-	texto = fentrada.readUTF();
-	respuesta3.setText(texto);
-	texto = fentrada.readUTF();
-	respuesta4.setText(texto);
-}
+	private void rellenar() throws IOException {
+		try 
+		{
+			System.out.println("Leyendo objeto");
+			fentradaPregunta = new ObjectInputStream(socket.getInputStream());
+			pregunta = (Preguntas) fentradaPregunta.readObject();
+			ordenAleatorioPregunta(pregunta);
+		} 
+		catch (ClassNotFoundException e) 
+		{
+			// TODO Auto-generated catch block
+			System.out.println("Clase no encontrada");
+			e.printStackTrace();
+		}
+		catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.out.println("IOException");
+		}
+	}
+	private void EnviarResultado(int resultado) {
+		//for (int i = 0; i < ServidorChat.CONEXIONES; i++) {
+			//Socket socket = ServidorChat.tabla[i];
+			try {
+				DataOutputStream fsalida = new DataOutputStream(socket.getOutputStream());
+				fsalida.writeInt(resultado);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+	}
+
+	private void ordenAleatorioPregunta(Preguntas pregunta) {
+		int n = (int) (Math.random() * (4 - 0)) + 0;
+		switch(n) 
+		{
+			case 0:
+				lbl_pregunta.setText(pregunta.getEnunciado());
+				respuesta1.setText(pregunta.getCorrecta());
+				respuesta2.setText(pregunta.getIncorrecta1());
+				respuesta3.setText(pregunta.getIncorrecta2());
+				respuesta4.setText(pregunta.getIncorrecta3());
+				break;
+			case 1:
+				lbl_pregunta.setText(pregunta.getEnunciado());
+				respuesta2.setText(pregunta.getCorrecta());
+				respuesta1.setText(pregunta.getIncorrecta1());
+				respuesta3.setText(pregunta.getIncorrecta2());
+				respuesta4.setText(pregunta.getIncorrecta3());
+				break;
+
+			case 2:
+				lbl_pregunta.setText(pregunta.getEnunciado());
+				respuesta3.setText(pregunta.getCorrecta());
+				respuesta1.setText(pregunta.getIncorrecta1());
+				respuesta2.setText(pregunta.getIncorrecta2());
+				respuesta4.setText(pregunta.getIncorrecta3());
+				break;
+
+			case 3:
+				lbl_pregunta.setText(pregunta.getEnunciado());
+				respuesta4.setText(pregunta.getCorrecta());
+				respuesta1.setText(pregunta.getIncorrecta1());
+				respuesta2.setText(pregunta.getIncorrecta2());
+				respuesta3.setText(pregunta.getIncorrecta3());
+				break;
+		}
+	}
+	private int comprobarPregunta(String respuesta, String correcta) 
+	{
+		int correcto = 0;
+		if(respuesta.equals(correcta)) 
+		{
+			correcto = 1;
+		}
+		return correcto;
+	}
 }

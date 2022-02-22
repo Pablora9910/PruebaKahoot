@@ -82,6 +82,7 @@ public class ServidorChat extends JFrame implements ActionListener {
 			ACTUALES++;
 			HiloServidor hilo = new HiloServidor(socket);
 			hilo.start();
+			
 		}
 // Si se alcanzan 15 conexiones o se pulsa el bot�n Salir,
 // el programa se sale del bucle.
