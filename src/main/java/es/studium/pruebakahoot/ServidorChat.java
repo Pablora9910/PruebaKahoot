@@ -27,6 +27,7 @@ public class ServidorChat extends JFrame implements ActionListener {
 	static JTextArea textarea;
 	JButton salir = new JButton("Salir");
 	static Socket[] tabla = new Socket[MAXIMO];
+	static HiloServidor[] hilos = new HiloServidor[MAXIMO];
 
 	public ServidorChat() {
 // Construimos el entorno grï¿½fico
@@ -61,7 +62,7 @@ public class ServidorChat extends JFrame implements ActionListener {
 		ServidorChat pantalla = new ServidorChat();
 		pantalla.setBounds(0, 0, 540, 450);
 		pantalla.setVisible(true);
-		mensaje.setText("Nï¿½mero de conexiones actuales: " + 0);
+		mensaje.setText("Número de conexiones actuales: " + 0);
 // Se usa un bucle para controlar el nï¿½mero de conexiones.
 // Dentro del bucle el servidor espera la conexiï¿½n
 // del cliente y cuando se conecta se crea un socket

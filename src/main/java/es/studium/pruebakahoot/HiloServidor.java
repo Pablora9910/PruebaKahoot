@@ -12,7 +12,7 @@ public class HiloServidor extends Thread {
 	ObjectOutputStream fentradaPregunta;
 	Socket socket;
 	String nombre;
-	boolean fin = false;
+	static boolean fin = false;
 	int resultado=-1;
 	int puntuacion = 0;
 
@@ -42,7 +42,10 @@ public class HiloServidor extends Thread {
 			try {
 				nombre =  fentrada.readUTF();
 				ServidorChat.textarea.append("Servidor> " + nombre);
-				this.setName(nombre);
+				if(!nombre.equals(""))
+				{
+					this.setName(nombre);
+				}
 				System.out.println(this.getName() + "Nombre Jugador");
 				if (cadena.trim().equals("*")) {
 					ServidorChat.ACTUALES--;
@@ -53,7 +56,7 @@ public class HiloServidor extends Thread {
 				// se añade al textarea del servidor y se reenvía a todos los clientes
 				else {
 					ServidorChat.textarea.append(cadena + "\n");
-				
+
 					Preguntas p = ObtenerPreguntas.consulta();
 					ServidorChat.textarea.append(p.getEnunciado());
 					EnviarMensajes(p);
@@ -61,58 +64,72 @@ public class HiloServidor extends Thread {
 					System.out.println(resultado + "SiEsCorrecto");
 					establecerPuntuacion();
 					System.out.println(puntuacion + "PuntJugador");
-					
-					/*EnviarMensajes(p.getCorrecta());
-					EnviarMensajes(p.getIncorrecta1());
-					EnviarMensajes(p.getIncorrecta2());
-					EnviarMensajes(p.getIncorrecta3());*/
+					if (puntuacion == 5)
+					{
+						System.out.println("Ha Ganado: " + this.getName());
+
+						fin = true;
+						for (int i = 0; i < ServidorChat.CONEXIONES; i++) {
+							Socket socket = ServidorChat.tabla[i];
+							try {
+								Preguntas pre = new Preguntas();
+								pre.setEnunciado("*");
+								pre.setCorrecta(this.getName());
+								fentradaPregunta = new ObjectOutputStream(socket.getOutputStream());
+								fentradaPregunta.writeObject(pre);
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						}
+
+					}
 
 
 
 				}
-			} catch (Exception ex) {
-				ex.printStackTrace();
-				fin = true;
+				} catch (Exception ex) {
+					ex.printStackTrace();
+					fin = true;
+				}
 			}
 		}
-	}
 
-	// El método EnviarMensajes() envía el texto del textarea a
-	// todos los sockets que están en la tabla de sockets,
-	// de esta forma todos ven la conversación.
-	// El programa abre un stream de salida para escribir el texto en el socket
-	private void EnviarMensajes(Preguntas pregunta) {
-		//for (int i = 0; i < ServidorChat.CONEXIONES; i++) {
-		//Socket socket = ServidorChat.tabla[i];
-		try {
-			fentradaPregunta = new ObjectOutputStream(socket.getOutputStream());
-			fentradaPregunta.writeObject(pregunta);
-		} catch (IOException e) {
-			e.printStackTrace();
+		// El método EnviarMensajes() envía el texto del textarea a
+		// todos los sockets que están en la tabla de sockets,
+		// de esta forma todos ven la conversación.
+		// El programa abre un stream de salida para escribir el texto en el socket
+		private void EnviarMensajes(Preguntas pregunta) {
+			//for (int i = 0; i < ServidorChat.CONEXIONES; i++) {
+			//Socket socket = ServidorChat.tabla[i];
+			try {
+				fentradaPregunta = new ObjectOutputStream(socket.getOutputStream());
+				fentradaPregunta.writeObject(pregunta);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			//}
 		}
-		//}
-	}
-	
-	private int recibirResultado() {
-		//for (int i = 0; i < ServidorChat.CONEXIONES; i++) {
-		//Socket socket = ServidorChat.tabla[i];
-		int correcto = -1;
-		try {
-			fentrada = new DataInputStream(socket.getInputStream());
-			correcto =  fentrada.readInt();
-		} catch (IOException e) {
-			e.printStackTrace();
+
+		private int recibirResultado() {
+			//for (int i = 0; i < ServidorChat.CONEXIONES; i++) {
+			//Socket socket = ServidorChat.tabla[i];
+			int correcto = -1;
+			try {
+				fentrada = new DataInputStream(socket.getInputStream());
+				correcto =  fentrada.readInt();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return correcto;
+			//}
 		}
-		return correcto;
-		//}
-	}
-	private void establecerPuntuacion() 
-	{
-		if(resultado == 1) 
+		private void establecerPuntuacion() 
 		{
-			puntuacion++;
+			if(resultado == 1) 
+			{
+				puntuacion++;
+			}
 		}
+
+
 	}
-
-
-}

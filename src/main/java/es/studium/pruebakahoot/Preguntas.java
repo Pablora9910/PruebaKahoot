@@ -10,7 +10,10 @@ public class Preguntas implements Serializable
 	private static final long serialVersionUID = 1L;
 	public int id;
 	public String enunciado, correcta, incorrecta1, incorrecta2, incorrecta3;
-	
+	public Preguntas()
+	{
+		
+	}
 	public Preguntas(int id, String enunciado,  String correcta, String incorrecta1, String incorrecta2, String incorrecta3)
 	{
 		this.id = id;

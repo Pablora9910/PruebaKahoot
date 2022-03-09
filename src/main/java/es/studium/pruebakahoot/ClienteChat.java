@@ -27,13 +27,16 @@ public class ClienteChat extends JFrame implements ActionListener {
 	String nombre;
 	boolean repetir = true;
 	JLabel lbl_pregunta=new JLabel("PREGUNTA");
+	int contador;
 
+	
+	ButtonGroup grupo=new ButtonGroup();
 	JRadioButton respuesta1=new JRadioButton("texto1");
 	JRadioButton respuesta2=new JRadioButton("texto2");
 	JRadioButton respuesta3=new JRadioButton("texto3");
 	JRadioButton respuesta4=new JRadioButton("texto4");
 
-	ButtonGroup grupo=new ButtonGroup();
+	
 
 	JTextArea area=new JTextArea();
 
@@ -108,7 +111,7 @@ public class ClienteChat extends JFrame implements ActionListener {
 		String nombre = JOptionPane.showInputDialog("Introduce tu nombre o nick:");
 		Socket socket = null;
 		try {
-			socket = new Socket("192.168.0.31", puerto);
+			socket = new Socket("127.0.0.1", puerto);
 		} catch (IOException ex) {
 			ex.printStackTrace();
 			JOptionPane.showMessageDialog(null, "Imposible conectar con el servidor \n" + ex.getMessage(),
@@ -132,12 +135,12 @@ public class ClienteChat extends JFrame implements ActionListener {
 			String texto=area.getText();
 			if(respuesta1.isSelected())
 			{
-				respuesta1.setSelected(false);
+				grupo.clearSelection();
 				int correcta = comprobarPregunta(respuesta1.getText(), pregunta.getCorrecta());
 				System.out.println(correcta + "Cliente Seleccionada");
 				EnviarResultado(correcta);
 			}
-			if(respuesta2.isSelected())
+			else if(respuesta2.isSelected())
 			{
 			
 				respuesta2.setSelected(false);
@@ -145,21 +148,21 @@ public class ClienteChat extends JFrame implements ActionListener {
 				System.out.println(correcta+ "Cliente Seleccionada");
 				EnviarResultado(correcta);
 			}
-			if(respuesta3.isSelected())
+			else if(respuesta3.isSelected())
 			{
 				respuesta3.setSelected(false);
 				int correcta = comprobarPregunta(respuesta3.getText(), pregunta.getCorrecta());
 				System.out.println(correcta+ "Cliente Seleccionada");
 				EnviarResultado(correcta);
 			}
-			if(respuesta4.isSelected())
+			else if(respuesta4.isSelected())
 			{
 				respuesta4.setSelected(false);
 				int correcta = comprobarPregunta(respuesta4.getText(), pregunta.getCorrecta());
 				System.out.println(correcta+ "Cliente Seleccionada");
 				EnviarResultado(correcta);
 			}
-
+			grupo.clearSelection();
 			try {
 				area.setText("");
 				fsalida.writeUTF(texto);
@@ -192,6 +195,7 @@ public class ClienteChat extends JFrame implements ActionListener {
 	public void ejecutar() {
 		while (repetir) {
 			try {
+				
 				rellenar();
 			} catch (IOException ex) {
 				JOptionPane.showMessageDialog(null, "Imposible conectar con el servidor \n" + ex.getMessage(),
@@ -201,6 +205,7 @@ public class ClienteChat extends JFrame implements ActionListener {
 		}
 		try {
 			socket.close();
+			System.out.println("Ganador desde cliente: " + pregunta.getCorrecta());
 			System.exit(0);
 		} catch (IOException ex) {
 			ex.printStackTrace();
@@ -213,7 +218,13 @@ public class ClienteChat extends JFrame implements ActionListener {
 			System.out.println("Leyendo objeto");
 			fentradaPregunta = new ObjectInputStream(socket.getInputStream());
 			pregunta = (Preguntas) fentradaPregunta.readObject();
-			ordenAleatorioPregunta(pregunta);
+			if(pregunta.getEnunciado().equals("*"))
+			{
+				repetir = false;
+			}else {
+				ordenAleatorioPregunta(pregunta);
+			}
+			
 		} 
 		catch (ClassNotFoundException e) 
 		{
