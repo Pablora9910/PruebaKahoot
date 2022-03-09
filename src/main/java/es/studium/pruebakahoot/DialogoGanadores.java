@@ -17,12 +17,13 @@ public class DialogoGanadores extends JDialog {
 	
 	private static final long serialVersionUID = 1L;
 	private final JPanel contentPanel = new JPanel();
+	public JLabel lblMensaje;
 
 	
 	public DialogoGanadores() {
 		setBackground(SystemColor.activeCaption);
 		setTitle("GAME OVER\r\n");
-		setIconImage(Toolkit.getDefaultToolkit().getImage("examen.png"));
+		setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\Pablo\\eclipse-workspace\\PruebaKahoot\\src\\main\\java\\es\\studium\\pruebakahoot\\examen.png"));
 		setBounds(100, 100, 413, 154);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBackground(SystemColor.activeCaption);
@@ -36,9 +37,9 @@ public class DialogoGanadores extends JDialog {
 			contentPanel.add(panel);
 			panel.setLayout(null);
 			
-			JLabel lblNewLabel_1 = new JLabel("HAS GANADO \r\n");
-			lblNewLabel_1.setBounds(89, 34, 202, 13);
-			panel.add(lblNewLabel_1);
+			lblMensaje= new JLabel("HAS GANADO \r\n");
+			lblMensaje.setBounds(89, 34, 202, 13);
+			panel.add(lblMensaje);
 			{
 				JLabel lblNewLabel = new JLabel("ENHORABUENA\r\n");
 				lblNewLabel.setBounds(79, 7, 214, 17);
@@ -53,7 +54,7 @@ public class DialogoGanadores extends JDialog {
 			panel_1.setLayout(null);
 			
 			JLabel lblNewLabel_2 = new JLabel("");
-			lblNewLabel_2.setIcon(new ImageIcon("trofeo-de-campeonato.png"));
+			lblNewLabel_2.setIcon(new ImageIcon("C:\\Users\\Pablo\\eclipse-workspace\\PruebaKahoot\\src\\main\\java\\es\\studium\\pruebakahoot\\trofeo-de-campeonato.png"));
 			lblNewLabel_2.setBounds(10, 0, 36, 42);
 			panel_1.add(lblNewLabel_2);
 		}

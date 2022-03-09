@@ -206,7 +206,10 @@ public class ClienteChat extends JFrame implements ActionListener {
 		try {
 			socket.close();
 			System.out.println("Ganador desde cliente: " + pregunta.getCorrecta());
-			System.exit(0);
+			this.setVisible(false);
+			DialogoGanadores dialogo = new DialogoGanadores();
+			dialogo.lblMensaje.setText("HA GANADO "+pregunta.getCorrecta());
+			//System.exit(0);
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
