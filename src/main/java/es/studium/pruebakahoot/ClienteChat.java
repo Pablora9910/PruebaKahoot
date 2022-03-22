@@ -53,16 +53,16 @@ public class ClienteChat extends JFrame implements ActionListener {
 		JPanel panel= new JPanel();		
 		panel.setLayout(null);	
 
-		lbl_pregunta.setBounds(20, 1, 300, 100);
+		lbl_pregunta.setBounds(20, 1, 500, 100);
 		panel.add(lbl_pregunta);
 
-		respuesta1.setBounds(50, 100, 200, 50);
+		respuesta1.setBounds(50, 100, 500, 50);
 		grupo.add(respuesta1);
-		respuesta2.setBounds(50, 150, 200, 50);
+		respuesta2.setBounds(50, 150, 500, 50);
 		grupo.add(respuesta2);
-		respuesta3.setBounds(50, 200, 200, 50);
+		respuesta3.setBounds(50, 200, 500, 50);
 		grupo.add(respuesta3);
-		respuesta4.setBounds(50, 250, 200, 50);
+		respuesta4.setBounds(50, 250, 500, 50);
 		grupo.add(respuesta4);
 
 		panel.add(respuesta1);
